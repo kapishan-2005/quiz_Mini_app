@@ -1,0 +1,13 @@
+[
+  { "question": "What is 2 + 2?", "options": ["3", "4", "5", "6"], "answer": "4" },
+  { "question": "Which language is used for web development?", "options": ["Python","JavaScript","C++","Java"], "answer": "JavaScript" },
+  { "question": "HTML stands for?", "options": ["Hyper Text Markup Language","High Text Markup Language","Hyperlinks Text Mark Language","None"], "answer": "Hyper Text Markup Language" },
+  { "question": "CSS stands for?", "options": ["Cascading Style Sheets","Computer Style Sheets","Colorful Style Sheets","Creative Style Sheets"], "answer": "Cascading Style Sheets" },
+  { "question": "Which tag is used for links in HTML?", "options": ["<link>","<a>","<href>","<url>"], "answer": "<a>" },
+  { "question": "Which symbol is used for comments in JS?", "options": ["//","/* */","#","<!-- -->"], "answer": "//" },
+  { "question": "Which method is used to add an element to the end of an array?", "options": ["push()","pop()","shift()","unshift()"], "answer": "push()" },
+  { "question": "JS is a ____ language?", "options": ["Server-side","Client-side","Both","None"], "answer": "Both" },
+  { "question": "Which HTML tag defines a paragraph?", "options": ["<p>","<para>","<pg>","<paragraph>"], "answer": "<p>" },
+  { "question": "Which operator is used for strict equality in JS?", "options": ["==","===","!=","!=="], "answer": "===" }
+
+]

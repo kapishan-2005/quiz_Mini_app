@@ -1,0 +1,106 @@
+/* General Body Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-style: normal;
+  background: linear-gradient(135deg, #1e3c72, #2a5298); /* blue gradient */
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container for all pages */
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: rgba(255, 255, 255, 0.05); /* semi-transparent for blue bg */
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+}
+
+/* Center text */
+.center {
+  text-align: center;
+}
+
+/* Buttons */
+button {
+  padding: 10px 20px;
+  margin: 10px 5px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+/* Inputs */
+input {
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+}
+
+/* Error and feedback */
+.error {
+  color: #ff6b6b;
+}
+
+.feedback {
+  font-weight: bold;
+}
+
+.correct {
+  color: #00ff7f;
+}
+
+.incorrect {
+  color: #ff4d4d;
+}
+
+/* Options List */
+ol {
+  padding-left: 20px;
+}
+
+li {
+  margin: 10px 0;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  list-style-type: decimal;
+}
+
+li.selected {
+  background: rgba(0, 255, 255, 0.2);
+}
+
+li.correct {
+  background: rgba(0, 255, 127, 0.3);
+}
+
+li.incorrect {
+  background: rgba(255, 77, 77, 0.3);
+}
+
+/* Review Answers on Result Page */
+#reviewAnswers div {
+  background: rgba(255,255,255,0.1);
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  color: #fff;
+}
+
+#reviewAnswers b {
+  color: #ffd700; /* golden for emphasis */
+}
