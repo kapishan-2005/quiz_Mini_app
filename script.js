@@ -1,147 +1,125 @@
-// --- LOGIN ---
-if (document.getElementById('loginForm')) {
-    const loginForm = document.getElementById('loginForm');
-    const errorMsg = document.getElementById('errorMsg');
-
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value.trim();
-
-        // Check username
-        if (username === "") {
-            errorMsg.textContent = "Username is required!";
-            return;
-        }
-
-        // Check password
-        if (password === "") {
-            errorMsg.textContent = "Password is required!";
-            return;
-        }
-
-        // If both are entered
-        errorMsg.textContent = "";
-        localStorage.setItem('username', username);
-        alert("Successfully logged in!");
-        window.location.href = 'quiz.html';
-    });
-}
-
-
-// --- QUIZ ---
 let questions = [];
-let currentQ = 0;
-let score = 0;
+let currentIdx = 0;
 let userAnswers = [];
+let timerInterval;
 
-if (document.getElementById('quizContainer')) {
+const landingPage = document.getElementById('landing-page');
+const loginModal = document.getElementById('login-modal');
+const quizContainer = document.getElementById('quiz-container');
+const resultPage = document.getElementById('result-page');
 
-    // Redirect if not logged in
-    if (!localStorage.getItem('username')) {
-        alert("Please login first!");
-        window.location.href = 'login.html';
-    }
-
-    const questionEl = document.getElementById('question');
-    const optionsList = document.getElementById('optionsList');
-    const nextBtn = document.getElementById('nextBtn');
-    const backBtn = document.getElementById('backBtn');
-    const feedback = document.getElementById('feedback');
-    const scoreEl = document.getElementById('score');
-
-    fetch('questions.json')
+fetch('questions.json')
     .then(res => res.json())
-    .then(data => {
-        questions = data;
-        displayQuestion();
-    });
+    .then(data => questions = data);
 
-    function displayQuestion() {
-        const q = questions[currentQ];
-        questionEl.textContent = `${currentQ+1}. ${q.question}`;
-        optionsList.innerHTML = '';
-        feedback.textContent = '';
+document.getElementById('start-btn').onclick = () => {
+    loginModal.style.display = 'block';
+};
 
-        q.options.forEach((opt, idx) => {
-            const li = document.createElement('li');
-            li.textContent = opt;
-            li.addEventListener('click', () => selectAnswer(opt, li));
-            if (userAnswers[currentQ] && userAnswers[currentQ] === opt) {
-                li.classList.add('selected');
-            }
-            optionsList.appendChild(li);
-        });
+document.getElementById('login-form').onsubmit = (e) => {
+    e.preventDefault();
 
-        backBtn.style.display = currentQ === 0 ? 'none' : 'inline-block';
-        nextBtn.textContent = currentQ === questions.length - 1 ? 'Finish' : 'Next';
+    const password = document.getElementById('password').value;
+    const errorEl = document.getElementById('pass-error');
+
+    // NORMAL WEBSITE PASSWORD VALIDATION
+    const passRegex =
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+    if (!passRegex.test(password)) {
+        errorEl.style.display = 'block';
+        return;
     }
 
-    function selectAnswer(answer, li) {
-        userAnswers[currentQ] = answer;
-        Array.from(optionsList.children).forEach(c => c.classList.remove('selected'));
-        li.classList.add('selected');
+    errorEl.style.display = 'none';
+    loginModal.style.display = 'none';
+    landingPage.classList.add('hidden');
+    quizContainer.classList.remove('hidden');
+    startQuiz();
+};
 
-        if (answer === questions[currentQ].answer) {
-            feedback.textContent = "Correct!";
-            feedback.className = 'feedback correct';
-        } else {
-            feedback.textContent = "Incorrect!";
-            feedback.className = 'feedback incorrect';
-        }
+function startQuiz() {
+    showQuestion();
+}
+
+function showQuestion() {
+    if (currentIdx >= questions.length) {
+        showResults();
+        return;
     }
 
-    nextBtn.addEventListener('click', () => {
-        if (!userAnswers[currentQ]) {
-            alert("Please select an answer!");
-            return;
-        }
-        if (currentQ < questions.length - 1) {
-            currentQ++;
-            displayQuestion();
-        } else {
-            // calculate score
-            score = userAnswers.filter((ans, idx) => ans === questions[idx].answer).length;
-            localStorage.setItem('score', score);
-            localStorage.setItem('userAnswers', JSON.stringify(userAnswers));
-            window.location.href = 'result.html';
-        }
-        scoreEl.textContent = userAnswers.filter((ans, idx) => ans === questions[idx].answer).length;
+    const q = questions[currentIdx];
+    document.getElementById('question-text').innerText = q.question;
+
+    const optionsDiv = document.getElementById('options-container');
+    optionsDiv.innerHTML = '';
+
+    q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => selectAnswer(opt);
+        optionsDiv.appendChild(btn);
     });
 
-    backBtn.addEventListener('click', () => {
-        if (currentQ > 0) {
-            currentQ--;
-            displayQuestion();
+    startTimer();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    let timeLeft = 60;
+
+    document.getElementById('timer').innerText = '01:00';
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText =
+            `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            selectAnswer('Timed Out');
         }
+    }, 1000);
+}
+
+function selectAnswer(ans) {
+    clearInterval(timerInterval);
+
+    userAnswers.push({
+        question: questions[currentIdx].question,
+        selected: ans,
+        correct: questions[currentIdx].answer
     });
+
+    currentIdx++;
+    showQuestion();
 }
 
-// --- RESULT PAGE ---
-if (document.getElementById('finalScore')) {
-    const finalScore = document.getElementById('finalScore');
-    const reviewDiv = document.getElementById('reviewAnswers');
+function showResults() {
+    quizContainer.classList.add('hidden');
+    resultPage.classList.remove('hidden');
 
-    const score = localStorage.getItem('score');
-    const userAnswers = JSON.parse(localStorage.getItem('userAnswers'));
-    fetch('questions.json')
-        .then(res => res.json())
-        .then(data => {
-            finalScore.textContent = score + ' / ' + data.length;
+    let score = 0;
+    const summary = document.getElementById('score-summary');
+    const detailed = document.getElementById('detailed-results');
 
-            data.forEach((q, idx) => {
-                const div = document.createElement('div');
-                div.innerHTML = `<p>${idx+1}. ${q.question}</p>
-                                 <p>Your answer: <b>${userAnswers[idx]}</b></p>
-                                 <p>Correct answer: <b>${q.answer}</b></p><hr>`;
-                reviewDiv.appendChild(div);
-            });
-        });
-}
+    detailed.innerHTML = '';
 
-function restartQuiz() {
-    localStorage.removeItem('score');
-    localStorage.removeItem('userAnswers');
-    window.location.href = 'quiz.html';
+    userAnswers.forEach((item, i) => {
+        const correct = item.selected === item.correct;
+        if (correct) score++;
+
+        detailed.innerHTML += `
+            <div class="result-item">
+                <p><strong>${i + 1}. ${item.question}</strong></p>
+                <p style="color:${correct ? '#00ff88' : '#ff6b6b'}">
+                    Your Answer: ${item.selected}
+                </p>
+                ${!correct ? `<p style="color:#00ff88">Correct Answer: ${item.correct}</p>` : ''}
+            </div>
+        `;
+    });
+
+    summary.innerHTML = `<h3>Final Score: ${score} / ${questions.length}</h3>`;
 }

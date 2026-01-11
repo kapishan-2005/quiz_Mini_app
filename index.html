@@ -1,21 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz App - Landing</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassy Quiz Pro</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container center">
-    <h1>Welcome to the Quiz App</h1>
-    <button id="startBtn">Attempt Quiz</button>
-  </div>
 
-  <script>
-    document.getElementById('startBtn').addEventListener('click', () => {
-      window.location.href = 'login.html';
-    });
-  </script>
+    <div id="landing-page" class="glass-card">
+        <h1>QuizMaster</h1>
+        <p>Challenge yourself with 5 questions.<br>1 minute per question!</p>
+        <button id="start-btn">Start Quiz</button>
+    </div>
+
+    <div id="login-modal" class="modal">
+        <div class="glass-card modal-content">
+            <h2>User Login</h2>
+
+            <form id="login-form">
+                <input type="email" id="email" placeholder="Email Address" required>
+
+                <input type="password" id="password" placeholder="Password" required>
+
+                <p id="pass-error" class="error-msg">
+                    Password must be at least 8 characters and include uppercase, lowercase, number, and symbol.
+                </p>
+
+                <button type="submit">Login & Begin</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="quiz-container" class="glass-card hidden">
+        <div id="timer">01:00</div>
+        <h3 id="question-text"></h3>
+        <div id="options-container"></div>
+    </div>
+
+    <div id="result-page" class="glass-card hidden">
+        <h2>Quiz Results</h2>
+        <div id="score-summary"></div>
+        <div id="detailed-results"></div>
+        <button onclick="location.reload()">Restart Quiz</button>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
